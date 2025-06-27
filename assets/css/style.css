@@ -124,7 +124,6 @@ html {
     transform: translateX(-50%);
     width: 100%;
     max-width: 500px;
-    border-bottom: 1px solid #ebebeb;
 }
 
 /* HEADER */
@@ -170,7 +169,7 @@ header h2 {
 #volume {
     -webkit-appearance: slider-vertical;
     position: absolute;
-    top: calc(100% + 5px);
+    top: calc(100% + 8px);
     width: 10px;
     height: 100px;
     display: none;
