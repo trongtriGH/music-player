@@ -1,7 +1,9 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
+const background = $('.background');
 const player = $('.player');
+const dashboard = $('.dashboard');
 const cd = $('.cd');
 const heading4 = $('header h4');
 const heading = $('header h2');
@@ -148,9 +150,10 @@ const app = {
         document.onscroll = function() {
             const scrollTop = window.scrollY || document.documentElement.scrollTop;
             const newCdWidth = cdWidth - scrollTop;
-
+            
             cd.style.width = newCdWidth > 0 ? newCdWidth + 'px' : 0;
             cd.style.opacity = newCdWidth / cdWidth;
+            
         }
 
         // Xử lý khi click play
@@ -330,6 +333,8 @@ const app = {
         cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`;
         audio.src = this.currentSong.path;
 
+        // Cập nhật background
+        background.style.backgroundImage = `url('${this.currentSong.image}')`;
 
         // Xuất hiện active cho bài hát đang phát
         $$('.playlist .song').forEach(song => {
