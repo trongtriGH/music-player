@@ -42,6 +42,11 @@ html {
     accent-color: var(--white-color);
 }
 
+.player.dark-mode .dashboard .control .btn-repeat.active i,
+.player.dark-mode .dashboard .control .btn-random.active i {
+    color: var(--primary-color);
+}
+
 .player.dark-mode .playlist .song {
     background-color: #333;
 }
@@ -100,10 +105,13 @@ html {
     padding: 16px 16px 14px;
     background-color: #fff;
     position: fixed;
-    top: 0;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
-    max-width: 480px;
+    max-width: 500px;
     border-bottom: 1px solid #ebebeb;
+    border-radius: 10px;
 }
 
 /* HEADER */
@@ -126,8 +134,7 @@ header h2 {
 .utils {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 36px
+    justify-content: center;
 }
 
 .btn-volume {
@@ -135,6 +142,7 @@ header h2 {
     flex-direction: column;
     align-items: center;
     position: relative;
+    margin-right: auto;
 }
 
 .btn-volume i {
@@ -150,8 +158,14 @@ header h2 {
     -webkit-appearance: slider-vertical;
     position: absolute;
     top: calc(100% + 5px);
-    width: 5px;
+    width: 10px;
+    height: 100px;
     display: none;
+    accent-color: var(--text-color);
+}
+
+.toggle-theme {
+    margin-left: auto;
 }
 
 /* CD */
@@ -232,7 +246,7 @@ header h2 {
 
 /* PLAYLIST */
 .playlist {
-    margin-top: 451px;
+    margin-top: 436px;
     padding: 12px;
 }
 

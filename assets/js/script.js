@@ -330,6 +330,7 @@ const app = {
         cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`;
         audio.src = this.currentSong.path;
 
+
         // Xuất hiện active cho bài hát đang phát
         $$('.playlist .song').forEach(song => {
             song.classList.remove('active');
