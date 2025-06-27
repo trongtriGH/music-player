@@ -135,7 +135,7 @@ header h2 {
     display: flex;
     justify-content: space-between;
     color: var(--text-color);
-    cursor: default;
+    pointer-events: none;
 }
 
 /* PLAYLIST */

@@ -102,9 +102,9 @@ const app = {
     ],
 
     render: function() {
-        const htmls = this.songs.map(song => {
+        const htmls = this.songs.map((song, index) => {
             return `
-            <div class="song">
+            <div class="song ${index === this.currentIndex ? 'active' : ''}" data-index="${index}">
                 <div class="thumb" style="background-image: url('${song.image}')"></div>
                 <div class="body">
                     <h3 class="title">${song.name}</h3>
@@ -176,6 +176,9 @@ const app = {
         audio.ontimeupdate = function() {
             if (audio.duration && !_this.isSeeking) { // Đang không tua bài hát mới cập nhật progress
                 progress.value = audio.currentTime;
+
+                // Ngăn lố giây cuối
+                let displayTime = Math.min(audio.currentTime, audio.duration)
                 timeStamp.textContent = formatTime(Math.floor(audio.currentTime));
             }
         }
@@ -272,6 +275,32 @@ const app = {
         cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`;
         audio.src = this.currentSong.path;
 
+        // Xuất hiện active cho bài hát đang phát
+        $$('.playlist .song').forEach(song => {
+            song.classList.remove('active');
+        });
+        const activeSong = $('.playlist .song[data-index="' + this.currentIndex + '"]');
+        console.log(activeSong);
+        if (activeSong) {
+            activeSong.classList.add('active');
+        }
+
+        // Kéo bài hát active lên top
+        setTimeout(() => {
+            if (this.currentIndex <= this.songs.length - 4) {
+                $('.song.active').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'end',
+                });
+            }
+            else {
+                $('.song.active').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                });
+            }
+        }, 300);           
+
         // Reset progress bar và time stamp ngay khi load bài hát mới
         // Không cần đợi metadata
         progress.value = 0;
@@ -280,7 +309,7 @@ const app = {
         audio.onloadedmetadata = function() {
             progress.min = 0;
             progress.max = audio.duration;
-            progress.step = 0.000001;
+            progress.step = 0.01;
             progress.value = 0;
 
             songDuration.textContent = formatTime(audio.duration);
