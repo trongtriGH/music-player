@@ -175,9 +175,8 @@ const app = {
         // Khi tiến độ bài hát thay đổi
         audio.ontimeupdate = function() {
             if (audio.duration && !_this.isSeeking) { // Đang không tua bài hát mới cập nhật progress
-                let progressPercent = Math.floor(audio.currentTime / audio.duration * 100);
-                progress.value = progressPercent;
-                timeStamp.textContent = formatTime(audio.currentTime);
+                progress.value = audio.currentTime;
+                timeStamp.textContent = formatTime(Math.floor(audio.currentTime));
             }
         }
 
@@ -188,13 +187,12 @@ const app = {
         }
 
         progress.oninput = function(e) {
-            const seekTime = audio.duration / 100 * e.target.value;
-            timeStamp.textContent = formatTime(seekTime);
+            const seekTime = parseFloat(e.target.value);
+            timeStamp.textContent = formatTime(Math.floor(seekTime));
         }
 
         progress.onmouseup = function(e) {
-            const seekTime = audio.duration / 100 * e.target.value;
-            audio.currentTime = seekTime;
+            audio.currentTime = parseFloat(e.target.value);
             _this.isSeeking = false;
         }
 
@@ -204,13 +202,12 @@ const app = {
         }
 
         progress.ontouchmove = function (e) {
-            const seekTime = audio.duration / 100 * e.target.value;
-            timeStamp.textContent = formatTime(seekTime);
+            const seekTime = parseFloat(e.target.value);
+            timeStamp.textContent = formatTime(Math.floor(seekTime));
         }
 
         progress.ontouchend = function (e) {
-            const seekTime = audio.duration / 100 * e.target.value;
-            audio.currentTime = seekTime;
+            audio.currentTime = parseFloat(e.target.value);
             _this.isSeeking = false;
         }
 
@@ -274,11 +271,19 @@ const app = {
         heading.textContent = this.currentSong.name;
         cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`;
         audio.src = this.currentSong.path;
+
+        // Reset progress bar và time stamp ngay khi load bài hát mới
+        // Không cần đợi metadata
+        progress.value = 0;
+        timeStamp.textContent = formatTime(0);
         
         audio.onloadedmetadata = function() {
-            const duration = Math.floor(audio.duration);
-            console.log('Duration:', duration);
-            songDuration.textContent = formatTime(duration);
+            progress.min = 0;
+            progress.max = audio.duration;
+            progress.step = 0.000001;
+            progress.value = 0;
+
+            songDuration.textContent = formatTime(audio.duration);
         }
     },
 
