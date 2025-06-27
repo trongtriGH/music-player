@@ -16,6 +16,9 @@ const repeatBtn = $('.btn-repeat');
 const timeStamp = $('.timestamp');
 const songDuration = $('.duration');
 const playlist = $('.playlist');
+const volumeBtn = $('.btn-volume');
+const volumeControl = $('#volume');
+const toggleThemeBtn = $('.toggle-theme');
 
 // Xử lý hiển thị thời gian
 const formatTime = function (time) {
@@ -203,7 +206,6 @@ const app = {
         /// Mobile
         progress.ontouchstart = function () {
             _this.isSeeking = true;
-            console.log('Touch start');
         }
 
         progress.ontouchmove = function (e) {
@@ -258,6 +260,31 @@ const app = {
             repeatBtn.classList.toggle('active', _this.isRepeat);
         }
 
+        // Khi nhấn vao nút volume
+        volumeBtn.onclick = function() {
+            volumeBtn.classList.toggle('active');
+        }
+
+        volumeControl.onclick = function (e) {  
+            e.stopPropagation();
+        }
+
+        const savedVolume = localStorage.getItem('volume');
+        if (savedVolume !== null) {
+            audio.volume = parseFloat(savedVolume);
+            volumeControl.value = savedVolume * 100;
+        } else {
+            audio.volume = 1;
+            volumeControl.value = 100;
+        }
+
+        // Khi thay đổi volume
+        volumeControl.oninput = function(e) {
+            const volume = parseFloat(e.target.value) / 100;
+            audio.volume = volume;
+            localStorage.setItem('volume', volume);
+        }
+
         // Khi kết thúc bài hát
         audio.onended = function() {
             if (_this.isRandom) {
@@ -288,6 +315,13 @@ const app = {
                 }
             }   
         }
+
+        // Toggle light mode / dark mode
+        toggleThemeBtn.onclick = function() {
+            _this.toggleTheme();
+        }
+
+
     },
 
     loadCurrentSong: function() {
@@ -360,6 +394,11 @@ const app = {
             this.currentIndex = this.songs.length - 1;
         }
         this.loadCurrentSong();
+    },
+
+    // Light mode / Dark mode
+    toggleTheme: function() {
+        player.classList.toggle('dark-mode');
     },
 
     start: function() {
