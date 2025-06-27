@@ -15,6 +15,7 @@ const randomBtn = $('.btn-random');
 const repeatBtn = $('.btn-repeat');
 const timeStamp = $('.timestamp');
 const songDuration = $('.duration');
+const playlist = $('.playlist');
 
 // Xử lý hiển thị thời gian
 const formatTime = function (time) {
@@ -116,7 +117,7 @@ const app = {
             </div>
             `
         });
-        $('.playlist').innerHTML = htmls.join('');
+        playlist.innerHTML = htmls.join('');
     },
 
     defineProperties: function() {
@@ -202,6 +203,7 @@ const app = {
         /// Mobile
         progress.ontouchstart = function () {
             _this.isSeeking = true;
+            console.log('Touch start');
         }
 
         progress.ontouchmove = function (e) {
@@ -267,6 +269,25 @@ const app = {
             }
             audio.play();
         }
+
+        // Khi click vào playlist
+        playlist.onclick = function(e) {
+            const songNode = e.target.closest('.song:not(.active)');
+            const optionNode = e.target.closest('.option');
+            if (songNode || optionNode) {
+                // Xử lý click vào bài hát
+                if (songNode) {
+                    _this.currentIndex = Number(songNode.dataset.index);
+                    _this.loadCurrentSong();
+                    audio.play();
+                }
+
+                // Xử lý click vào option
+                if (optionNode) {
+
+                }
+            }   
+        }
     },
 
     loadCurrentSong: function() {
@@ -280,14 +301,13 @@ const app = {
             song.classList.remove('active');
         });
         const activeSong = $('.playlist .song[data-index="' + this.currentIndex + '"]');
-        console.log(activeSong);
         if (activeSong) {
             activeSong.classList.add('active');
         }
 
         // Kéo bài hát active lên top
         setTimeout(() => {
-            if (this.currentIndex <= this.songs.length - 4) {
+            if (this.currentIndex <= 2) {
                 $('.song.active').scrollIntoView({
                     behavior: 'smooth',
                     block: 'end',
@@ -296,7 +316,7 @@ const app = {
             else {
                 $('.song.active').scrollIntoView({
                     behavior: 'smooth',
-                    block: 'nearest',
+                    block: 'center',
                 });
             }
         }, 300);           
