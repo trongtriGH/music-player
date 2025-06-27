@@ -13,6 +13,16 @@ const prevBtn = $('.btn-prev');
 const nextBtn = $('.btn-next');
 const randomBtn = $('.btn-random');
 const repeatBtn = $('.btn-repeat');
+const timeStamp = $('.timestamp');
+const songDuration = $('.duration');
+
+// Xử lý hiển thị thời gian
+const formatTime = function (time) {
+    const timeInSeconds = Math.floor(time);
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+};
 
 
 const app = {
@@ -20,6 +30,7 @@ const app = {
     isPlaying: false,
     isRandom: false,
     isRepeat: false,
+    isSeeking: false,
 
     songs: [
         {
@@ -163,16 +174,44 @@ const app = {
 
         // Khi tiến độ bài hát thay đổi
         audio.ontimeupdate = function() {
-            if (audio.duration) {
+            if (audio.duration && !_this.isSeeking) { // Đang không tua bài hát mới cập nhật progress
                 let progressPercent = Math.floor(audio.currentTime / audio.duration * 100);
                 progress.value = progressPercent;
+                timeStamp.textContent = formatTime(audio.currentTime);
             }
         }
 
         // Xử lý khi tua bài hát
-        progress.onchange = function(e) {
+        /// Desktop
+        progress.onmousedown = function() {
+            _this.isSeeking = true;
+        }
+
+        progress.oninput = function(e) {
+            const seekTime = audio.duration / 100 * e.target.value;
+            timeStamp.textContent = formatTime(seekTime);
+        }
+
+        progress.onmouseup = function(e) {
             const seekTime = audio.duration / 100 * e.target.value;
             audio.currentTime = seekTime;
+            _this.isSeeking = false;
+        }
+
+        /// Mobile
+        progress.ontouchstart = function () {
+            _this.isSeeking = true;
+        }
+
+        progress.ontouchmove = function (e) {
+            const seekTime = audio.duration / 100 * e.target.value;
+            timeStamp.textContent = formatTime(seekTime);
+        }
+
+        progress.ontouchend = function (e) {
+            const seekTime = audio.duration / 100 * e.target.value;
+            audio.currentTime = seekTime;
+            _this.isSeeking = false;
         }
 
         // Khi next bài hát
@@ -235,6 +274,12 @@ const app = {
         heading.textContent = this.currentSong.name;
         cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`;
         audio.src = this.currentSong.path;
+        
+        audio.onloadedmetadata = function() {
+            const duration = Math.floor(audio.duration);
+            console.log('Duration:', duration);
+            songDuration.textContent = formatTime(duration);
+        }
     },
 
     nextSong: function() {
