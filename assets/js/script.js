@@ -24,6 +24,8 @@ const toggleThemeBtn = $('.toggle-theme');
 const dashboardOption = $('.dashboard-option');
 const optionModal = $('.option-modal');
 const optionItems = $$('.option-list li');
+const searchInput = $('.search input');
+const favoriteOption = $('.option-list .favorites');
 
 // Xử lý hiển thị thời gian
 const formatTime = function (time) {
@@ -47,66 +49,77 @@ const app = {
             singer: "Lotus Juice",
             path: "./assets/music/its-going-down-now.mp3",
             image: "./assets/img/track-art/its-going-down-now.png",
+            isFavorite: false,
         },
         {
             name: "King Of The World",
             singer: "Simon Panrucke",
             path: "./assets/music/king-of-the-world.mp3",
             image: "./assets/img/track-art/king-of-the-world.png",
+            isFavorite: false,
         },
         {
             name: "It's kill or be killed",
             singer: "Yoshioka Taku Squad",
             path: "./assets/music/its-kill-or-be-killed.mp3",
             image: "./assets/img/track-art/its-kill-or-be-killed.jpg",
+            isFavorite: false,
         },
         {
             name: "Tomorrow Is Mine",
             singer: "Elizabeth Larkin",
             path: "./assets/music/tomorrow-is-mine.mp3",
             image: "./assets/img/track-art/tomorrow-is-mine.jpg",
+            isFavorite: false,
         },
         {
             name: "踊",
             singer: "Ado",
             path: "./assets/music/踊.mp3",
             image: "./assets/img/track-art/踊.jpg",
+            isFavorite: false,
         },
         {
             name: "Save Me",
             singer: "DEAMN",
             path: "./assets/music/save-me.mp3",
             image: "./assets/img/track-art/save-me.jpg",
+            isFavorite: false,
         },
         {   
             name: "Túy âm",
             singer: "Masew",
             path: "./assets/music/tuy-am.mp3",
             image: "./assets/img/track-art/tuy-am.jpg",
+            isFavorite: false,
         },
         {
             name: "The Whims of Fate",
             singer: "Lyn Inaizumi",
             path: "./assets/music/the-whims-of-fate.mp3",
             image: "./assets/img/track-art/the-whims-of-fate.jpg",
+            isFavorite: false,
         },
         {
             name: "Time To Make History",
             singer: "Shihoko Hirata",
             path: "./assets/music/time-to-make-history.mp3",
             image: "./assets/img/track-art/time-to-make-history.jpg",
+            isFavorite: false,
         },
         {
             name: "Million Dollar Baby",
             singer: "Tommy Richman",
             path: "./assets/music/million-dollar-baby.mp3",
             image: "./assets/img/track-art/million-dollar-baby.jpg",
+            isFavorite: false,
         },
         {
             name: "God of the Dead",
             singer: "Darren Korb",
             path: "./assets/music/god-of-the-dead.mp3",
             image: "./assets/img/track-art/god-of-the-dead.jpg",
+            isFavorite: false,
         }
     ],
 
@@ -114,17 +127,19 @@ const app = {
         const htmls = this.songs.map((song, index) => {
             return `
             <div class="song ${index === this.currentIndex ? 'active' : ''}" data-index="${index}">
+                <div class="number">${index + 1}</div>            
                 <div class="thumb" style="background-image: url('${song.image}')"></div>
                 <div class="body">
                     <h3 class="title">${song.name}</h3>
                     <p class="author">${song.singer}</p>
                 </div>
                 <div class="option">
-                    <i class="fas fa-ellipsis-h"></i>
+                    <i class="fas fa-heart favorite-icon ${song.isFavorite ? 'active' : ''}"></i><i class="fas fa-trash delete-icon"></i>
                 </div>
             </div>
             `
         });
+
         playlist.innerHTML = htmls.join('');
         // Kiểm tra theme
         if (player.classList.contains('dark-mode')) {
@@ -309,24 +324,63 @@ const app = {
             audio.play();
         }
 
-        // Khi click vào playlist
-        playlist.onclick = function(e) {
-            const songNode = e.target.closest('.song:not(.active)');
-            const optionNode = e.target.closest('.option');
-            if (songNode || optionNode) {
-                // Xử lý click vào bài hát
-                if (songNode) {
-                    _this.currentIndex = Number(songNode.dataset.index);
-                    _this.loadCurrentSong();
-                    audio.play();
+        playlist.onclick = function (e) {
+            const favoriteNode = e.target.closest('.option .favorite-icon');
+            const deleteNode = e.target.closest('.option .delete-icon');
+            const songNode = e.target.closest('.song');
+
+            // Click nút yêu thích
+            if (favoriteNode && songNode) {
+                e.stopPropagation();
+                const songIndex = Number(songNode.dataset.index);
+                const song = _this.songs[songIndex];
+
+                song.isFavorite = !song.isFavorite;
+                favoriteNode.classList.toggle('active', song.isFavorite);
+                return; // Dừng không cho chạy tiếp
+            }
+
+            // Click nút xóa
+            if (deleteNode && songNode) {
+                e.stopPropagation();
+                const confirmDelete = confirm('Bạn có chắc muốn xóa bài hát này không?');
+                if (!confirmDelete) return;
+                const songIndex = Number(songNode.dataset.index);
+                const isCurrentSong = songIndex === _this.currentIndex;
+                
+                _this.songs.splice(songIndex, 1);
+
+                // Nếu xóa bài trước bài đang phát, dịch chỉ số
+                if (songIndex < _this.currentIndex) {
+                    _this.currentIndex -= 1;
                 }
 
-                // Xử lý click vào option
-                if (optionNode) {
-                    // console.log('Option clicked');
+                _this.render();
+
+                // Nếu xóa bài đang phát
+                if (isCurrentSong) {
+                    if (_this.songs.length > 0) {
+                        if (_this.currentIndex >= _this.songs.length) {
+                            _this.currentIndex = _this.songs.length - 1;
+                        }
+                        _this.loadCurrentSong();
+                        audio.play();
+                    } else {
+                        audio.pause();
+                        audio.src = "";
+                    }
                 }
-            }   
-        }
+                return;
+            }
+
+            // Click vào bài hát (tránh click bài đang active)
+            if (songNode && !songNode.classList.contains('active')) {
+                const songIndex = Number(songNode.dataset.index);
+                _this.currentIndex = songIndex;
+                _this.loadCurrentSong();
+                audio.play();
+            }
+        };
 
         const darkMode = localStorage.getItem('darkMode');
         if (darkMode === 'true') {
@@ -361,7 +415,34 @@ const app = {
         document.onclick = function () {
             optionModal.classList.remove('active');
         }
+
+        // Tìm kiếm bài hát (theo tên hoặc ca sĩ hoặc số thứ tự)
+        searchInput.oninput = function () {
+            const keyword = this.value.trim().toLowerCase();
+            const songElements = $$('.playlist .song');
+
+            songElements.forEach(song => {
+                const title = song.querySelector('.title').textContent.toLowerCase();
+                const singer = song.querySelector('.author').textContent.toLowerCase();
+                const number = song.querySelector('.number').textContent;
+
+                if (title.includes(keyword) || singer.includes(keyword) ||  number === keyword) {
+                    song.style.display = '';
+                } else {
+                    song.style.display = 'none';
+                }
+            });
+        };
+
+
+        
+
+        // Hiện danh sách yêu thích
+        favoriteOption.onclick = function(e) {
+            e.stopPropagation();
+
             
+        }
     },
 
     loadCurrentSong: function() {

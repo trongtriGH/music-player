@@ -78,7 +78,7 @@ html {
 }
 
 .player.dark-mode .playlist .song.active {
-    border: 5px solid var(--primary-color);
+    border: 4px solid var(--primary-color);
 }
 
 .player.dark-mode .progress {
@@ -149,6 +149,7 @@ html {
     border-radius: 12px;
     padding: 8px 16px;
     font-size: 15px;
+    transition: all 0.2s linear;
 }
 
 .search i {
@@ -206,6 +207,7 @@ header h2 {
 .btn-volume i {
     color: var(--text-color);
     font-size: 18px;
+    cursor: pointer;
 }
 
 .btn-volume.active #volume {
@@ -277,7 +279,7 @@ header h2 {
 
 .option-modal .option-list .favorites:hover,
 .player.dark-mode .option-modal .option-list .favorites:hover i {
-    color: #ff4081;
+    color: var(--primary-color);    
 }
 
 .option-modal .option-list .add-song:hover,
@@ -307,12 +309,18 @@ header h2 {
     align-items: center;
     justify-content: space-around;
     padding: 18px 10px 8px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .control .btn {
     color: #666;
     padding: 18px;
     font-size: 18px;
+}
+
+.control .btn:hover {
+    opacity: 0.7;
+    cursor: pointer;
 }
 
 .control .btn.active {
@@ -334,17 +342,17 @@ header h2 {
 .progress {
     width: 100%;
     height: 4px;
-    background: #d3d3d3;
-    outline: none;
-    opacity: 0.7;
+    -webkit-appearance: none;
+    background-color: #ddd;
     -webkit-transition: 0.2s;
     transition: opacity 0.2s;
     accent-color: var(--primary-color);
+    outline: none;
     border: none;
 }
 
 .progress::-webkit-slider-thumb {
-    transform: scale(0.75);
+    transform: scale(0.8);
 }
 
 /* Time */
@@ -366,13 +374,23 @@ header h2 {
     align-items: center;
     margin-bottom: 12px;
     background-color: #fff;
-    padding: 8px 16px;
+    padding: 8px;
     border-radius: 10px;
     box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
+.song .number {
+    width: 20px;
+    margin-left: 4px;
+    color: var(--text-color);
+}
+
+.player.dark-mode .song .number {
+    color: var(--white-color);
+}
+
 .song.active {
-    border: 5px solid var(--primary-color);
+    border: 4px solid var(--primary-color);
 }
 
 .song:active {
@@ -406,4 +424,28 @@ header h2 {
     padding: 16px 8px;
     color: #999;
     font-size: 18px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.song .option i{
+    padding: 8px;
+    cursor: pointer;
+    user-select: none;
+    
+}
+
+.song .option i:hover {
+    color: #aaa;
+}
+
+.favorite-icon {
+    margin-right: 4px;
+}
+
+.favorite-icon.active {
+    color: #ff4081 !important;
+}
+
+.delete-icon {
+    
 }
