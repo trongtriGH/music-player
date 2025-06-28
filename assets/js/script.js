@@ -21,6 +21,9 @@ const playlist = $('.playlist');
 const volumeBtn = $('.btn-volume');
 const volumeControl = $('#volume');
 const toggleThemeBtn = $('.toggle-theme');
+const dashboardOption = $('.dashboard-option');
+const optionModal = $('.option-modal');
+const optionItems = $$('.option-list li');
 
 // Xử lý hiển thị thời gian
 const formatTime = function (time) {
@@ -123,6 +126,12 @@ const app = {
             `
         });
         playlist.innerHTML = htmls.join('');
+        // Kiểm tra theme
+        if (player.classList.contains('dark-mode')) {
+            toggleThemeBtn.innerHTML = '<i class="fas fa-moon" style="color: #fff;"></i> Dark mode';
+        } else {
+            toggleThemeBtn.innerHTML = '<i class="fas fa-sun" style = "color: gold;"></i> Light mode';
+        }
     },
 
     defineProperties: function() {
@@ -320,11 +329,23 @@ const app = {
         }
 
         // Toggle light mode / dark mode
-        toggleThemeBtn.onclick = function() {
-            _this.toggleTheme();
+        toggleThemeBtn.onclick = function(e) {
+            e.stopPropagation();
+            if (player.classList.contains('dark-mode')) {
+                this.innerHTML = '<i class="fas fa-sun" style="color: gold;"></i> Light mode';
+                _this.toggleTheme();
+            } else {
+                this.innerHTML = '<i class="fas fa-moon" style="color: #fff;"></i> Dark mode';
+                _this.toggleTheme();
+            }
+            
         }
 
-
+        // Toggle dashboard option
+        dashboardOption.onclick = function(e) {
+            optionModal.classList.toggle('active');
+        }
+            
     },
 
     loadCurrentSong: function() {
