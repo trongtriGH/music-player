@@ -128,9 +128,9 @@ const app = {
         playlist.innerHTML = htmls.join('');
         // Kiểm tra theme
         if (player.classList.contains('dark-mode')) {
-            toggleThemeBtn.innerHTML = '<i class="fas fa-moon" style="color: #fff;"></i> Dark mode';
-        } else {
             toggleThemeBtn.innerHTML = '<i class="fas fa-sun" style = "color: gold;"></i> Light mode';
+        } else {
+            toggleThemeBtn.innerHTML = '<i class="fas fa-moon" style="color: #000;"></i> Dark mode';
         }
     },
 
@@ -323,27 +323,43 @@ const app = {
 
                 // Xử lý click vào option
                 if (optionNode) {
-
+                    // console.log('Option clicked');
                 }
             }   
+        }
+
+        const darkMode = localStorage.getItem('darkMode');
+        if (darkMode === 'true') {
+            dashboard.style.transition = 'none';
+            player.classList.add('dark-mode');
         }
 
         // Toggle light mode / dark mode
         toggleThemeBtn.onclick = function(e) {
             e.stopPropagation();
             if (player.classList.contains('dark-mode')) {
-                this.innerHTML = '<i class="fas fa-sun" style="color: gold;"></i> Light mode';
+                this.innerHTML = '<i class="fas fa-moon" style="color: #000;"></i> Dark mode';
                 _this.toggleTheme();
             } else {
-                this.innerHTML = '<i class="fas fa-moon" style="color: #fff;"></i> Dark mode';
+                this.innerHTML = '<i class="fas fa-sun" style="color: gold;"></i> Light mode';
                 _this.toggleTheme();
             }
-            
+            const isDark = player.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark ? 'true' : 'false');
         }
 
-        // Toggle dashboard option
+        // Toggle dashboard option  
         dashboardOption.onclick = function(e) {
+            e.stopPropagation();
             optionModal.classList.toggle('active');
+        }
+
+        optionModal.onclick = function (e) {
+            e.stopPropagation();
+        }
+
+        document.onclick = function () {
+            optionModal.classList.remove('active');
         }
             
     },

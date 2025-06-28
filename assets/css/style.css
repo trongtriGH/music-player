@@ -99,7 +99,8 @@ html {
 .playlist .song .author,
 .playlist .song.active,
 .progress,
-.toggle-theme {
+.toggle-theme,
+.player.dark-mode .option-modal {
     transition: all 0.2s linear
 }
 /* Dark mode end */
@@ -126,7 +127,51 @@ html {
     width: 100%;
     max-width: 500px;
     border-bottom: 1px solid #ddd;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
+
+.search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+}
+
+.search input {
+    width: 100%;
+    height: 36px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 8px 16px;
+    font-size: 15px;
+}
+
+.search i {
+    position: absolute;
+    right: 12px;
+    color: var(--text-color);
+
+}
+
+.player.dark-mode .search input {
+    background-color: #333;
+    border: 1px solid #666;
+    color: var(--white-color);
+}
+
+.player.dark-mode .search i {
+    color: #666;
+}
+
+.search input:focus {
+    outline: none;
+}
+
 
 /* HEADER */
 header {
@@ -185,17 +230,18 @@ header h2 {
 .dashboard .dashboard-option {
     position: relative;
     cursor: pointer;
+    /* remove the blue select effect */
+    -webkit-tap-highlight-color: transparent;
 }
 
 .option-modal {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 3px);
     right: 0;
     min-width: 180px;
     background-color: var(--white-color);
-    box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.2);
     border-radius: 5px;
-    padding: 8px;
     z-index: 10;
     display: none;
     user-select: none;
@@ -220,7 +266,7 @@ header h2 {
 }
 
 .option-modal .option-list li {
-    padding: 5px 10px;
+    padding: 10px 16px;
     color: var(--text-color);
 }
 
@@ -229,8 +275,14 @@ header h2 {
     color: var(--primary-color);
 }
 
-.toggle-theme {
+.option-modal .option-list .favorites:hover,
+.player.dark-mode .option-modal .option-list .favorites:hover i {
+    color: #ff4081;
+}
 
+.option-modal .option-list .add-song:hover,
+.player.dark-mode .option-modal .option-list .add-song:hover i {
+    color: var(--primary-color);
 }
 
 /* CD */
@@ -305,7 +357,7 @@ header h2 {
 
 /* PLAYLIST */
 .playlist {
-    margin-top: 436px;
+    margin-top: 479px;
     padding: 12px;
 }
 
