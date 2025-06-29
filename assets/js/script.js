@@ -680,9 +680,9 @@ const app = {
         do {
             newIndex = Math.floor(Math.random() * this.songs.length)
         } while (this.playedSongs.includes(newIndex))
-        this.playedSongs.push(newIndex)
-        this.currenIndex = newIndex
-        this.loadCurrentSong()
+        this.playedSongs.push(newIndex);
+        this.currentIndex = newIndex;
+        this.loadCurrentSong();
     },
 
     prevSong: function () {
