@@ -277,6 +277,19 @@ header h2 {
     color: var(--primary-color);
 }
 
+.option-modal .option-list .favorites.active,
+.option-modal .option-list .favorites.active i{
+    color: #ff4081;
+}
+
+.option-modal .option-list .favorites.active:hover,
+.option-modal .option-list .favorites.active:hover i,
+.player.dark-mode .option-modal .option-list .favorites.active:hover i{
+    color: #ff4081;
+    transition: all 0.1s linear;
+}
+
+
 .option-modal .option-list .favorites:hover,
 .player.dark-mode .option-modal .option-list .favorites:hover i {
     color: var(--primary-color);    

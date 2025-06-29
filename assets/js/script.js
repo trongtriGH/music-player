@@ -45,6 +45,13 @@ const app = {
 
     songs: [
         {
+            name: "The Whims of Fate",
+            singer: "Lyn Inaizumi",
+            path: "./assets/music/the-whims-of-fate.mp3",
+            image: "./assets/img/track-art/the-whims-of-fate.jpg",
+            isFavorite: false,
+        },
+        {
             name: "It's going down now",
             singer: "Lotus Juice",
             path: "./assets/music/its-going-down-now.mp3",
@@ -91,13 +98,6 @@ const app = {
             singer: "Masew",
             path: "./assets/music/tuy-am.mp3",
             image: "./assets/img/track-art/tuy-am.jpg",
-            isFavorite: false,
-        },
-        {
-            name: "The Whims of Fate",
-            singer: "Lyn Inaizumi",
-            path: "./assets/music/the-whims-of-fate.mp3",
-            image: "./assets/img/track-art/the-whims-of-fate.jpg",
             isFavorite: false,
         },
         {
@@ -355,7 +355,19 @@ const app = {
                     _this.currentIndex -= 1;
                 }
 
-                _this.render();
+                if (favoriteOption.classList.contains('active')) {
+                    _this.render();
+                    _this.songs.forEach((song, index) => {
+                        const songElement = $('.playlist .song[data-index="' + index + '"]');
+                        if (song.isFavorite) {
+                            songElement.style.display = '';
+                        } else {
+                            songElement.style.display = 'none';
+                        }
+                    });
+                } else {
+                    _this.render();
+                }
 
                 // Nếu xóa bài đang phát
                 if (isCurrentSong) {
@@ -370,6 +382,7 @@ const app = {
                         audio.src = "";
                     }
                 }
+
                 return;
             }
 
@@ -418,6 +431,7 @@ const app = {
 
         // Tìm kiếm bài hát (theo tên hoặc ca sĩ hoặc số thứ tự)
         searchInput.oninput = function () {
+            favoriteOption.classList.remove('active'); // Tắt chế độ yêu thích khi tìm kiếm
             const keyword = this.value.trim().toLowerCase();
             const songElements = $$('.playlist .song');
 
@@ -426,22 +440,38 @@ const app = {
                 const singer = song.querySelector('.author').textContent.toLowerCase();
                 const number = song.querySelector('.number').textContent;
 
-                if (title.includes(keyword) || singer.includes(keyword) ||  number === keyword) {
+                if (number === keyword || title.includes(keyword) || singer.includes(keyword)) {
                     song.style.display = '';
                 } else {
                     song.style.display = 'none';
                 }
             });
         };
-
-
-        
+    
+        const handleFavoriteMode = function() {
+            if (!favoriteOption.classList.contains('active')) {
+                favoriteOption.classList.add('active');
+                _this.songs.forEach((song, index) => {
+                    const songElement = $('.playlist .song[data-index="' + index + '"]');
+                    if (song.isFavorite) {
+                        songElement.style.display = '';
+                    } else {
+                        songElement.style.display = 'none';
+                    }
+                });
+            } else {
+                favoriteOption.classList.remove('active');
+                _this.songs.forEach((song, index) => {
+                    const songElement = $('.playlist .song[data-index="' + index + '"]');
+                    songElement.style.display = '';
+                });
+            }
+        }
 
         // Hiện danh sách yêu thích
         favoriteOption.onclick = function(e) {
             e.stopPropagation();
-
-            
+            handleFavoriteMode();
         }
     },
 
