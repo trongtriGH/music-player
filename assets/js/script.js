@@ -1,6 +1,8 @@
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
+const PLAYER_STORAGE_KEY = 'MY_MUSIC_PLAYER';
+
 const background = $('.background');
 const player = $('.player');
 const dashboard = $('.dashboard');
@@ -26,7 +28,6 @@ const optionModal = $('.option-modal');
 const optionItems = $$('.option-list li');
 const searchInput = $('.search input');
 const favoriteOption = $('.option-list .favorites');
-
 const uploadOption = $('.add-song');
 const audioUpload = $('#audio-upload');
 const addSongModal = $('.add-song-modal');
@@ -52,6 +53,7 @@ const app = {
     isRandom: false,
     isRepeat: false,
     isSeeking: false,
+    config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
 
     songs: [
         {
@@ -132,6 +134,11 @@ const app = {
             isFavorite: false,
         }
     ],
+
+    setConfig: function(key, value) {
+        this.config[key] = value;
+        localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(this.config));
+    },
 
     render: function() {
         const htmls = this.songs.map((song, index) => {
@@ -281,8 +288,10 @@ const app = {
             if (_this.isRepeat) {
                 _this.isRepeat = false;
                 repeatBtn.classList.remove('active');
+                _this.setConfig('isRepeat', false);
             }
             _this.isRandom = !_this.isRandom;
+            _this.setConfig('isRandom', _this.isRandom);
             randomBtn.classList.toggle('active', _this.isRandom);
         }
 
@@ -292,8 +301,10 @@ const app = {
             if (_this.isRandom) {
                 _this.isRandom = false;
                 randomBtn.classList.remove('active');
+                _this.setConfig('isRandom', false);
             }
             _this.isRepeat = !_this.isRepeat;
+            _this.setConfig('isRepeat', _this.isRepeat);
             repeatBtn.classList.toggle('active', _this.isRepeat);
         }
 
@@ -310,6 +321,7 @@ const app = {
         volumeControl.oninput = function(e) {
             const volume = parseFloat(e.target.value) / 100;
             audio.volume = volume;
+            _this.setConfig('volume', volume);
         }
 
         // Khi kết thúc bài hát
@@ -337,6 +349,7 @@ const app = {
 
                 song.isFavorite = !song.isFavorite;
                 favoriteNode.classList.toggle('active', song.isFavorite);
+                _this.setConfig('favorites', _this.songs.map(song => song.isFavorite));
                 return; // Dừng không cho chạy tiếp
             }
 
@@ -349,6 +362,8 @@ const app = {
                 const isCurrentSong = songIndex === _this.currentIndex;
                 
                 _this.songs.splice(songIndex, 1);
+                _this.setConfig('favorites', _this.songs.map(song => song.isFavorite));
+                _this.setConfig('songs', _this.songs);
 
                 // Nếu xóa bài trước bài đang phát, dịch chỉ số
                 if (songIndex < _this.currentIndex) {
@@ -558,7 +573,8 @@ const app = {
             }
             addSongModal.style.display = "none";
             audioUpload.value = "";
-            alert("Bài hát đã được thêm thành công!");
+
+            _this.setConfig('songs', _this.songs);
         };
 
         
@@ -613,6 +629,39 @@ const app = {
         }
     },
 
+    loadConfig: function () {
+        this.isRandom = this.config.isRandom || false;
+        this.isRepeat = this.config.isRepeat || false;
+
+        if (this.isRandom) randomBtn.classList.add('active');
+        if (this.isRepeat) repeatBtn.classList.add('active');
+
+        if (this.config.isDarkMode) {
+            player.classList.add('dark-mode');
+        }
+
+        if (Array.isArray(this.config.favorites)) {
+            this.config.favorites.forEach((isFav, index) => {
+                if (this.songs[index]) {
+                    this.songs[index].isFavorite = isFav;
+                }
+            });
+        }
+
+        if (Array.isArray(this.config.songs)) {
+            this.songs = this.config.songs;
+        }
+
+        if (typeof this.config.volume === 'number') {
+            audio.volume = this.config.volume;
+            volumeControl.value = this.config.volume * 100;
+        } else {
+            audio.volume = 1;
+            volumeControl.value = 100;
+        }
+    },
+    
+
     nextSong: function() {
         this.currentIndex++;
         if (this.currentIndex >= this.songs.length) {
@@ -642,9 +691,13 @@ const app = {
     // Light mode / Dark mode
     toggleTheme: function() {
         player.classList.toggle('dark-mode');
+        this.setConfig('isDarkMode', player.classList.contains('dark-mode'));
     },
 
     start: function() {
+        // Tải cấu hình từ localStorage
+        this.loadConfig();
+
         // Định nghĩa các thuộc tính cho object
         this.defineProperties();
 
