@@ -670,14 +670,19 @@ const app = {
         this.loadCurrentSong();
     },
 
-    playRandomSong: function () {
-        let newIndex;
-        do {
-            newIndex = Math.floor(Math.random() * this.songs.length);
-        } while (newIndex === this.currentIndex);
+    playedSongs: [],
 
-        this.currentIndex = newIndex;
-        this.loadCurrentSong();
+    playRandomSong: function () {
+        let newIndex
+        if (this.playedSongs.length >= app.songs.length) {
+            this.playedSongs = []
+        }
+        do {
+            newIndex = Math.floor(Math.random() * this.songs.length)
+        } while (this.playedSongs.includes(newIndex))
+        this.playedSongs.push(newIndex)
+        this.currenIndex = newIndex
+        this.loadCurrentSong()
     },
 
     prevSong: function () {
