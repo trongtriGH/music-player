@@ -2,6 +2,8 @@
 
 **Ứng dụng phát nhạc sử dụng HTML, CSS và JavaScript thuần. Hỗ trợ quản lý danh sách phát, chuyển đổi giao diện sáng/tối, yêu thích bài hát, điều chỉnh âm lượng, tìm kiếm và thêm nhạc từ thiết bị cá nhân.**
 
+**Link Github Pages:** https://trongtrigh.github.io/music-player/
+
 ---
 
 ## 🚀 Tính Năng
