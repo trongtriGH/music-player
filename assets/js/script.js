@@ -26,6 +26,7 @@ const optionModal = $('.option-modal');
 const optionItems = $$('.option-list li');
 const searchInput = $('.search input');
 const favoriteOption = $('.option-list .favorites');
+const uploadOption = $('.option-list .add-song');
 
 // Xử lý hiển thị thời gian
 const formatTime = function (time) {
@@ -56,13 +57,6 @@ const app = {
             singer: "Lotus Juice",
             path: "./assets/music/its-going-down-now.mp3",
             image: "./assets/img/track-art/its-going-down-now.png",
-            isFavorite: false,
-        },
-        {
-            name: "King Of The World",
-            singer: "Simon Panrucke",
-            path: "./assets/music/king-of-the-world.mp3",
-            image: "./assets/img/track-art/king-of-the-world.png",
             isFavorite: false,
         },
         {
@@ -119,6 +113,13 @@ const app = {
             singer: "Darren Korb",
             path: "./assets/music/god-of-the-dead.mp3",
             image: "./assets/img/track-art/god-of-the-dead.jpg",
+            isFavorite: false,
+        },
+        {
+            name: "King Of The World",
+            singer: "Simon Panrucke",
+            path: "./assets/music/king-of-the-world.mp3",
+            image: "./assets/img/track-art/king-of-the-world.png",
             isFavorite: false,
         }
     ],
@@ -377,11 +378,33 @@ const app = {
                         }
                         _this.loadCurrentSong();
                         audio.play();
-                    } else {
+                    } else {                   
                         audio.pause();
                         audio.src = "";
                     }
                 }
+
+                if (_this.songs.length === 0) {
+                    heading.textContent = 'No songs available';
+                    heading4.textContent = 'PLAYING 0 OF 0';
+                    cdThumb.style.backgroundImage = '';
+                    background.style.backgroundImage = '';
+                    player.classList.remove('playing');
+                    timeStamp.textContent = '00:00';
+                    songDuration.textContent = '00:00';
+                    progress.value = 0;
+                    
+                    repeatBtn.classList.remove('active');
+                    randomBtn.classList.remove('active');
+
+                    playBtn.style.pointerEvents = 'none';
+                    prevBtn.style.pointerEvents = 'none';
+                    nextBtn.style.pointerEvents = 'none';
+
+                    return;
+                }
+
+                heading4.textContent = 'PLAYING ' + (_this.currentIndex + 1) + ' OF ' + _this.songs.length;
 
                 return;
             }
@@ -472,6 +495,11 @@ const app = {
         favoriteOption.onclick = function(e) {
             e.stopPropagation();
             handleFavoriteMode();
+        }
+
+        // Thêm bài hát mới
+        uploadOption.onclick = function(e) {
+            e.stopPropagation();
         }
     },
 
