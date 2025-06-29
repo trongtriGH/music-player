@@ -101,7 +101,7 @@ html {
 .progress,
 .toggle-theme,
 .player.dark-mode .option-modal {
-    transition: all 0.2s linear
+    transition: all 0.1s linear;
 }
 /* Dark mode end */
 
@@ -149,7 +149,7 @@ html {
     border-radius: 12px;
     padding: 8px 16px;
     font-size: 15px;
-    transition: all 0.2s linear;
+    transition: all 0.1s linear;
 }
 
 .search i {
@@ -270,6 +270,7 @@ header h2 {
 .option-modal .option-list li {
     padding: 10px 16px;
     color: var(--text-color);
+    transition: all 0.1s linear;
 }
 
 .option-modal .option-list li:hover {
@@ -286,13 +287,12 @@ header h2 {
 .option-modal .option-list .favorites.active:hover i,
 .player.dark-mode .option-modal .option-list .favorites.active:hover i{
     color: #ff4081;
-    transition: all 0.1s linear;
 }
 
 
 .option-modal .option-list .favorites:hover,
 .player.dark-mode .option-modal .option-list .favorites:hover i {
-    color: var(--primary-color);    
+    color: var(--primary-color);   
 }
 
 .option-modal .option-list .add-song:hover,
@@ -459,6 +459,89 @@ header h2 {
     color: #ff4081 !important;
 }
 
-.delete-icon {
-    
+.add-song-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.add-song-modal .modal-content {
+    background: var(--white-color);
+    color: var(--text-color);
+    padding: 20px;
+    border-radius: 8px;
+    width: 360px;
+}
+
+.player.dark-mode ~ .add-song-modal .modal-content {
+    background: #444;
+    color: var(--white-color);
+}
+
+.modal-content-heading {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.add-song-modal input {
+    width: 100%;
+    height: 36px;
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+.add-song-modal input[type="file"],
+.player.dark-mode ~ .add-song-modal input[type="file"] {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+}
+
+.add-song-modal input:focus {
+    outline: none;
+}
+
+.add-thumbnail-label {
+    font-size: 14px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.player.dark-mode ~ .add-song-modal input {
+    background: #444;
+    color: var(--white-color);
+    border: 1px solid #666;
+}
+
+.add-song-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+#add-song-confirm,
+#add-song-cancel {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.player.dark-mode ~ .add-song-modal #add-song-confirm,
+.player.dark-mode ~ .add-song-modal #add-song-cancel {
+    border: 1px solid #555;
+}
+
+#add-song-confirm:hover,
+#add-song-cancel:hover {
+    opacity: 0.8;
 }

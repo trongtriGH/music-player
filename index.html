@@ -33,13 +33,13 @@
                     <h2></h2> 
                     <div class="dashboard-option">
                         <i class="fas fa-ellipsis-h dashboard-option__icon"></i>
-                        <d class="option-modal">
+                        <div class="option-modal">
                             <ul class="option-list">
                                 <li class="toggle-theme"></li>
                                 <li class="favorites"><i class="fas fa-heart"></i> Favorite Songs</li>
                                 <li class="add-song"><i class="fas fa-upload"></i> Upload Song</li>
                             </ul>
-                        </d>
+                        </div>
                     </div>
                 </div> 
             </header>
@@ -84,6 +84,27 @@
         <!-- Playlist -->
         <div class="playlist">
 
+        </div>
+    </div>
+
+    <!-- Modal thêm bài hát -->
+    <input type="file" id="audio-upload" accept="audio/*" hidden>
+    
+    <div class="add-song-modal" style="display: none;">
+        <div class="modal-content">
+            <h3 class="modal-content-heading">Thêm bài hát mới</h3>
+            <input type="text" id="song-name" placeholder="Nhập tên bài hát">
+
+            <input type="text" id="singer-name" placeholder="Nhập tên nghệ sĩ">
+    
+            <label class="add-thumbnail-label">Chọn ảnh bìa</label>
+            <input type="file" id="song-image" accept="image/*">
+            <img id="image-preview" style="max-width: 100%; margin-bottom: 16px; display: none;">
+
+            <div class="add-song-buttons">
+                <div id="add-song-confirm">Thêm</div>
+                <div id="add-song-cancel">Hủy</div>
+            </div>
         </div>
     </div>
 

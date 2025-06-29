@@ -26,7 +26,16 @@ const optionModal = $('.option-modal');
 const optionItems = $$('.option-list li');
 const searchInput = $('.search input');
 const favoriteOption = $('.option-list .favorites');
-const uploadOption = $('.option-list .add-song');
+
+const uploadOption = $('.add-song');
+const audioUpload = $('#audio-upload');
+const addSongModal = $('.add-song-modal');
+const songNameInput = $('#song-name');
+const singerNameInput = $('#singer-name');
+const songImageInput = $('#song-image');
+const imagePreview = $('#image-preview');
+const addSongConfirm = $('#add-song-confirm');
+const addSongCancel = $('#add-song-cancel');
 
 // Xử lý hiển thị thời gian
 const formatTime = function (time) {
@@ -45,6 +54,13 @@ const app = {
     isSeeking: false,
 
     songs: [
+        {
+            name: "Save Me",
+            singer: "DEAMN",
+            path: "./assets/music/save-me.mp3",
+            image: "./assets/img/track-art/save-me.jpg",
+            isFavorite: false,
+        },
         {
             name: "The Whims of Fate",
             singer: "Lyn Inaizumi",
@@ -78,13 +94,6 @@ const app = {
             singer: "Ado",
             path: "./assets/music/踊.mp3",
             image: "./assets/img/track-art/踊.jpg",
-            isFavorite: false,
-        },
-        {
-            name: "Save Me",
-            singer: "DEAMN",
-            path: "./assets/music/save-me.mp3",
-            image: "./assets/img/track-art/save-me.jpg",
             isFavorite: false,
         },
         {   
@@ -297,20 +306,10 @@ const app = {
             e.stopPropagation();
         }
 
-        const savedVolume = localStorage.getItem('volume');
-        if (savedVolume !== null) {
-            audio.volume = parseFloat(savedVolume);
-            volumeControl.value = savedVolume * 100;
-        } else {
-            audio.volume = 1;
-            volumeControl.value = 100;
-        }
-
         // Khi thay đổi volume
         volumeControl.oninput = function(e) {
             const volume = parseFloat(e.target.value) / 100;
             audio.volume = volume;
-            localStorage.setItem('volume', volume);
         }
 
         // Khi kết thúc bài hát
@@ -393,14 +392,8 @@ const app = {
                     timeStamp.textContent = '00:00';
                     songDuration.textContent = '00:00';
                     progress.value = 0;
-                    
                     repeatBtn.classList.remove('active');
                     randomBtn.classList.remove('active');
-
-                    playBtn.style.pointerEvents = 'none';
-                    prevBtn.style.pointerEvents = 'none';
-                    nextBtn.style.pointerEvents = 'none';
-
                     return;
                 }
 
@@ -418,12 +411,6 @@ const app = {
             }
         };
 
-        const darkMode = localStorage.getItem('darkMode');
-        if (darkMode === 'true') {
-            dashboard.style.transition = 'none';
-            player.classList.add('dark-mode');
-        }
-
         // Toggle light mode / dark mode
         toggleThemeBtn.onclick = function(e) {
             e.stopPropagation();
@@ -435,7 +422,6 @@ const app = {
                 _this.toggleTheme();
             }
             const isDark = player.classList.contains('dark-mode');
-            localStorage.setItem('darkMode', isDark ? 'true' : 'false');
         }
 
         // Toggle dashboard option  
@@ -497,10 +483,85 @@ const app = {
             handleFavoriteMode();
         }
 
+
+
         // Thêm bài hát mới
-        uploadOption.onclick = function(e) {
+        uploadOption.onclick = function (e) {
             e.stopPropagation();
-        }
+            favoriteOption.classList.remove('active'); // Tắt chế độ yêu thích khi thêm bài hát
+            audioUpload.click();
+        };
+
+        audioUpload.onchange = function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const fileName = file.name.replace(/\.[^/.]+$/, ""); // Loại bỏ phần mở rộng
+            songNameInput.value = fileName;
+            singerNameInput.value = "";
+            songImageInput.value = "";
+
+            // Hiển thị modal thêm bài hát
+            addSongModal.style.display = "flex";
+        };
+
+        songImageInput.onchange = function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const imageUrl = URL.createObjectURL(file);
+                imagePreview.src = imageUrl;
+                imagePreview.style.display = "block";
+            } else {
+                imagePreview.src = "";
+                imagePreview.style.display = "none";
+            }
+        };
+
+        addSongCancel.onclick = function () {
+            addSongModal.style.display = "none";
+            audioUpload.value = "";
+            // Reset image preview
+            imagePreview.src = "";
+            imagePreview.style.display = "none";
+        };
+
+        addSongConfirm.onclick = function () {
+            if (!songNameInput.value.trim()) {
+                songNameInput.value = "Unknown Song";
+            }
+            if (!singerNameInput.value.trim()) {
+                singerNameInput.value = "Unknown Singer";
+            }
+
+            const name = songNameInput.value.trim();
+            const singer = singerNameInput.value.trim();
+            const imageFile = songImageInput.files[0];
+            const audioFile = audioUpload.files[0];
+            
+            const imageUrl = imageFile ? URL.createObjectURL(imageFile) : "./assets/img/track-art/default.jpg";          
+            const audioUrl = URL.createObjectURL(audioFile);
+
+            _this.songs.push({
+                name: name,
+                singer: singer,
+                path: audioUrl,
+                image: imageUrl,
+                isFavorite: false
+            });
+
+            _this.render();
+            // Trường hợp danh sách đang trống
+            if (_this.songs.length === 1) {
+                _this.currentIndex = 0;
+                _this.loadCurrentSong();
+                audio.play();
+            }
+            addSongModal.style.display = "none";
+            audioUpload.value = "";
+            alert("Bài hát đã được thêm thành công!");
+        };
+
+        
     },
 
     loadCurrentSong: function() {
